@@ -157,6 +157,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="nav-item" onclick="showView('mkt',this)">
     <span class="nav-dot" style="background:#7F77DD;"></span>Marketing
   </div>
+  <div style="height:16px;"></div>
+  <div class="nav-label">Historical</div>
+  <div class="nav-item" onclick="showView('history',this)">
+    <span class="nav-dot" style="background:#A78BFA;"></span>
+    Past eNPS results
+  </div>
   <div style="height:20px;border-top:0.5px solid #2A2D3E;margin-top:1rem;padding-top:1rem;">
     <div style="font-size:11px;color:#4B5563;line-height:1.6;">People &amp; Culture<br>Happiness Titans<br>April 2026</div>
   </div>
@@ -719,6 +725,65 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="footer">Marketing · eNPS 1H 2026 · For executive reference</div>
 </div>
 
+<!-- ============ HISTORICAL ============ -->
+<div id="view-history" class="view">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Past eNPS results</div>
+      <div class="sh-sub">Oct 2020 – May 2025 · 13 surveys · For comparison reference</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="badge b-bl">13 surveys</span>
+      <span class="badge" style="background:rgba(167,139,250,.15);color:#A78BFA;border:0.5px solid rgba(167,139,250,.3);">1H 2026: 58</span>
+    </div>
+  </div>
+
+  <div class="sl">Score over time</div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div style="font-size:13px;color:#6B7280;margin-bottom:14px;">All 13 surveys plotted chronologically. Hover any point to see the score and period.</div>
+    <div style="position:relative;width:100%;height:220px;">
+      <canvas id="historyChart" role="img" aria-label="Line chart showing eNPS scores from Oct 2020 to May 2025. Scores range from 44 to 80, with a peak of 80 in Jul 2022 and a low of 44 in April 2021.">Historical eNPS: Oct 2020: 48, Apr 2021: 44, Jul 2021: 57, Oct 2021: 52, Jan 2022: 61, Apr 2022: 75, Jul 2022: 80, Nov 2022: 70, Apr 2023: 79.40, Nov 2023: 65.40, Feb 2024: 66.20, Aug 2024: 66.10, May 2025: 50.</canvas>
+    </div>
+  </div>
+
+  <div class="sl">Survey-by-survey breakdown</div>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr style="border-bottom:0.5px solid #2A2D3E;">
+          <th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:500;color:#4B5563;letter-spacing:.05em;text-transform:uppercase;">#</th>
+          <th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:500;color:#4B5563;letter-spacing:.05em;text-transform:uppercase;">Period</th>
+          <th style="text-align:right;padding:8px 12px;font-size:11px;font-weight:500;color:#4B5563;letter-spacing:.05em;text-transform:uppercase;">vs. Previous</th>
+          <th style="text-align:right;padding:8px 12px;font-size:11px;font-weight:500;color:#4B5563;letter-spacing:.05em;text-transform:uppercase;">eNPS Score</th>
+        </tr>
+      </thead>
+      <tbody id="history-rows"></tbody>
+    </table>
+  </div>
+
+  <div class="sl">Notable movements</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;">
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
+      <span style="font-size:15px;flex-shrink:0;">📈</span>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">Highest recorded: 80 &nbsp;·&nbsp; Jul 2022</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">The peak score across all 13 surveys, following a run of three consecutive gains from Jan–Jul 2022.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
+      <span style="font-size:15px;flex-shrink:0;">📉</span>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">Largest single drop: −17.72% &nbsp;·&nbsp; Nov 2023</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">The sharpest decline in the dataset, bringing the score from 79.40 down to 65.40 in one survey cycle.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
+      <span style="font-size:15px;flex-shrink:0;">📊</span>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">1H 2026 in context: 58</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">Up from May 2025 (50). This is the 9th survey to score between 50 and 70 across the full dataset. The all-time average across all 13 surveys is 63.7.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
+      <span style="font-size:15px;flex-shrink:0;">📅</span>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">2024 plateau: 66.20 → 66.10</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">Feb and Aug 2024 were nearly identical at 66.20 and 66.10 — the flattest back-to-back result in the dataset, suggesting stability but limited momentum going into 2025.</div></div>
+    </div>
+  </div>
+
+  <div class="footer" style="color:#4B5563;">Time Doctor · eNPS historical record · Oct 2020 – 1H 2026 · For executive reference</div>
+</div>
+
 </div><!-- end main -->
 
 <script>
@@ -803,6 +868,113 @@ renderDrivers('pe-dv',  [3.90,4.56,4.80,4.46,4.38,4.34,4.38], '#3B82F6');
 renderDrivers('ops-dv', [3.35,4.54,4.54,4.54,4.46,4.31,4.54], '#1D9E75');
 renderDrivers('rev-dv', [3.82,4.32,4.27,4.00,3.82,3.86,4.09], '#F5A623');
 renderDrivers('mkt-dv', [3.40,4.20,4.70,4.20,4.00,4.10,4.00], '#7F77DD');
+
+// HISTORICAL DATA
+const histData = [
+  {order:1,  period:'Oct 2020',  change: null,     score: 48.00},
+  {order:2,  period:'Apr 2021',  change: -8.33,    score: 44.00},
+  {order:3,  period:'Jul 2021',  change: +29.55,   score: 57.00},
+  {order:4,  period:'Oct 2021',  change: -8.77,    score: 52.00},
+  {order:5,  period:'Jan 2022',  change: +17.31,   score: 61.00},
+  {order:6,  period:'Apr 2022',  change: +22.95,   score: 75.00},
+  {order:7,  period:'Jul 2022',  change: +6.67,    score: 80.00},
+  {order:8,  period:'Nov 2022',  change: -12.50,   score: 70.00},
+  {order:9,  period:'Apr 2023',  change: +13.43,   score: 79.40},
+  {order:10, period:'Nov 2023',  change: -17.72,   score: 65.40},
+  {order:11, period:'Feb 2024',  change: +1.22,    score: 66.20},
+  {order:12, period:'Aug 2024',  change: -0.15,    score: 66.10},
+  {order:13, period:'May 2025',  change: -24.36,   score: 50.00},
+  {order:14, period:'1H 2026',   change: +16.00,   score: 58.00, current: true},
+];
+
+function scoreColor(s) {
+  if (s >= 75) return '#3B6D11';
+  if (s >= 60) return '#1D7F60';
+  if (s >= 50) return '#BA7517';
+  return '#A32D2D';
+}
+function scoreBg(s) {
+  if (s >= 75) return 'rgba(59,109,17,.25)';
+  if (s >= 60) return 'rgba(29,127,96,.2)';
+  if (s >= 50) return 'rgba(186,117,23,.2)';
+  return 'rgba(163,45,45,.25)';
+}
+
+// Build table rows
+const tbody = document.getElementById('history-rows');
+histData.forEach(r => {
+  const isCurrentRow = r.current ? 'background:#1A2744;' : '';
+  const currentBadge = r.current ? '<span style="font-size:10px;font-weight:500;padding:1px 6px;border-radius:4px;background:rgba(96,165,250,.15);color:#60A5FA;margin-left:6px;">current</span>' : '';
+  const changeHtml = r.change === null
+    ? '<span style="color:#4B5563;">—</span>'
+    : `<span style="font-size:12px;font-weight:500;color:${r.change >= 0 ? '#7DC654' : '#F87171'};">${r.change >= 0 ? '+' : ''}${r.change.toFixed(2)}%</span>`;
+  const scoreColor2 = scoreColor(r.score);
+  const scoreBg2 = scoreBg(r.score);
+  tbody.innerHTML += `<tr style="border-bottom:0.5px solid #2A2D3E;${isCurrentRow}">
+    <td style="padding:10px 12px;color:#4B5563;font-size:12px;">${r.order}</td>
+    <td style="padding:10px 12px;color:#E8EAF0;font-weight:${r.current?'500':'400'};">${r.period}${currentBadge}</td>
+    <td style="padding:10px 12px;text-align:right;">${changeHtml}</td>
+    <td style="padding:10px 12px;text-align:right;">
+      <span style="font-size:13px;font-weight:500;padding:3px 12px;border-radius:6px;background:${scoreBg2};color:${scoreColor2};">${r.score.toFixed(2)}</span>
+    </td>
+  </tr>`;
+});
+
+// History line chart — only render when view becomes active
+let histChartRendered = false;
+const origShowView = showView;
+window.showView = function(id, btn) {
+  origShowView(id, btn);
+  if (id === 'history' && !histChartRendered) {
+    histChartRendered = true;
+    const labels = histData.map(r => r.period);
+    const scores = histData.map(r => r.score);
+    const pointColors = scores.map((s, i) => histData[i].current ? '#60A5FA' : scoreColor(s));
+    const pointRadii = scores.map((s, i) => histData[i].current ? 7 : 4);
+    new Chart(document.getElementById('historyChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data: scores,
+          borderColor: '#A78BFA',
+          borderWidth: 2,
+          backgroundColor: 'rgba(167,139,250,.08)',
+          fill: true,
+          tension: 0.35,
+          pointBackgroundColor: pointColors,
+          pointBorderColor: pointColors,
+          pointRadius: pointRadii,
+          pointHoverRadius: 8,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` eNPS: ${ctx.raw}`,
+              title: ctx => ctx[0].label,
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255,255,255,0.04)' },
+            ticks: { color: '#6B7280', font: { size: 10 }, maxRotation: 45 }
+          },
+          y: {
+            min: 30, max: 90,
+            grid: { color: 'rgba(255,255,255,0.04)' },
+            ticks: { color: '#6B7280', font: { size: 11 } }
+          }
+        }
+      }
+    });
+  }
+};
 </script>
 </body>
 </html>
