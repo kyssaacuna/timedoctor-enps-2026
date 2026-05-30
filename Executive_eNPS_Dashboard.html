@@ -730,7 +730,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="sh">
     <div>
       <div class="sh-title">Past eNPS results</div>
-      <div class="sh-sub">Oct 2020 – May 2025 · 13 surveys · For comparison reference</div>
+      <div class="sh-sub">Oct 2020 – 1H 2026 · 14 surveys · Source: P&C reports 1H 2024, 2H 2024, 1H 2025</div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <span class="badge b-bl">13 surveys</span>
@@ -738,47 +738,107 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
 
-  <div class="sl">Score over time</div>
+  <div class="sl">Score over time — hover any point for details</div>
   <div class="card" style="margin-bottom:1.5rem;">
-    <div style="font-size:13px;color:#6B7280;margin-bottom:14px;">All 13 surveys plotted chronologically. Hover any point to see the score and period.</div>
-    <div style="position:relative;width:100%;height:220px;">
-      <canvas id="historyChart" role="img" aria-label="Line chart showing eNPS scores from Oct 2020 to May 2025. Scores range from 44 to 80, with a peak of 80 in Jul 2022 and a low of 44 in April 2021.">Historical eNPS: Oct 2020: 48, Apr 2021: 44, Jul 2021: 57, Oct 2021: 52, Jan 2022: 61, Apr 2022: 75, Jul 2022: 80, Nov 2022: 70, Apr 2023: 79.40, Nov 2023: 65.40, Feb 2024: 66.20, Aug 2024: 66.10, May 2025: 50.</canvas>
+    <div style="position:relative;width:100%;height:300px;">
+      <canvas id="historyChart" role="img" aria-label="Line chart showing all 14 eNPS scores from Oct 2020 to 1H 2026 with data labels. Scores range from 44 to 80, peaking at Jul 2022.">Historical eNPS: Oct 2020: 48, Apr 2021: 44, Jul 2021: 57, Oct 2021: 52, Jan 2022: 61, Apr 2022: 75, Jul 2022: 80, Nov 2022: 70, Apr 2023: 79.40, Nov 2023: 65.40, Feb 2024: 66.20, Aug 2024: 66.10, May 2025: 50, 1H 2026: 58.</canvas>
     </div>
-  </div>
-
-  <div class="sl">Survey-by-survey breakdown</div>
-  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
-    <table style="width:100%;border-collapse:collapse;font-size:13px;">
-      <thead>
-        <tr style="border-bottom:0.5px solid #2A2D3E;">
-          <th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:500;color:#4B5563;letter-spacing:.05em;text-transform:uppercase;">#</th>
-          <th style="text-align:left;padding:8px 12px;font-size:11px;font-weight:500;color:#4B5563;letter-spacing:.05em;text-transform:uppercase;">Period</th>
-          <th style="text-align:right;padding:8px 12px;font-size:11px;font-weight:500;color:#4B5563;letter-spacing:.05em;text-transform:uppercase;">vs. Previous</th>
-          <th style="text-align:right;padding:8px 12px;font-size:11px;font-weight:500;color:#4B5563;letter-spacing:.05em;text-transform:uppercase;">eNPS Score</th>
-        </tr>
-      </thead>
-      <tbody id="history-rows"></tbody>
-    </table>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;padding-top:12px;border-top:0.5px solid #2A2D3E;">
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#6B7280;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(59,109,17,.35);display:inline-block;"></span>75–80 · Peak range</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#6B7280;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(29,127,96,.35);display:inline-block;"></span>60–74</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#6B7280;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(186,117,23,.35);display:inline-block;"></span>50–59</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#6B7280;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(163,45,45,.35);display:inline-block;"></span>below 50</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#60A5FA;margin-left:auto;"><span style="width:10px;height:10px;border-radius:50%;background:#60A5FA;display:inline-block;"></span>Current survey (1H 2026)</span>
+    </div>
   </div>
 
   <div class="sl">Notable movements</div>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;">
     <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
       <span style="font-size:15px;flex-shrink:0;">📈</span>
-      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">Highest recorded: 80 &nbsp;·&nbsp; Jul 2022</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">The peak score across all 13 surveys, following a run of three consecutive gains from Jan–Jul 2022.</div></div>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">Highest recorded: 80 &nbsp;·&nbsp; Jul 2022</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">The peak score across all surveys, following three consecutive gains from Jan–Jul 2022. Promoters were at their highest and participation was strong.</div></div>
     </div>
     <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
       <span style="font-size:15px;flex-shrink:0;">📉</span>
-      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">Largest single drop: −17.72% &nbsp;·&nbsp; Nov 2023</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">The sharpest decline in the dataset, bringing the score from 79.40 down to 65.40 in one survey cycle.</div></div>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">Largest single drop: −24.36% &nbsp;·&nbsp; May 2025 (1H 2025)</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">Score fell from 66.10 (Aug 2024) to 50.00. Reported by People & Culture (1H 2025 report): detractors rose to 8.7% (11 answers), passives at 32.3% (41 answers), promoters fell to 59.1% (75 answers). Top feedback themes: salary evaluation &amp; increase, medical care plan gaps, and team engagement. Participation was 90% (127/141).</div></div>
     </div>
     <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
       <span style="font-size:15px;flex-shrink:0;">📊</span>
-      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">1H 2026 in context: 58</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">Up from May 2025 (50). This is the 9th survey to score between 50 and 70 across the full dataset. The all-time average across all 13 surveys is 63.7.</div></div>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">1H 2026 vs. 1H 2025: +8 points (50 → 58)</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">The current survey recovers 8 points from May 2025's low. Detractors dropped from 8.7% to 2% (3 answers). Promoters held at ~60%. Participation: 87% (125/135) vs 90% (127/141) in 1H 2025. Recurring themes across both surveys: compensation transparency, career paths, and in-person connection.</div></div>
     </div>
     <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
       <span style="font-size:15px;flex-shrink:0;">📅</span>
-      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">2024 plateau: 66.20 → 66.10</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">Feb and Aug 2024 were nearly identical at 66.20 and 66.10 — the flattest back-to-back result in the dataset, suggesting stability but limited momentum going into 2025.</div></div>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">2024 plateau: 66.20 → 66.10 (1H vs 2H 2024)</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">From the 2H 2024 report (Rami Mellado): eNPS remained the same vs 1H. Participation decreased 13 points (88% → 79%, 130 → 112 people). Dept scores: Operations 94.4, Revenue 66.7, PE 57.1. Key improvement areas cited: communication &amp; transparency, career development, compensation (missed annual increments, payroll delays).</div></div>
     </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
+      <span style="font-size:15px;flex-shrink:0;">🔁</span>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">Recurring themes across 2024–2026 surveys</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">Compensation (salary increases, appraisal transparency) and career growth have appeared in every survey from 1H 2024 through 1H 2026. Team connection and in-person meetups also featured consistently. Strengths that have held across all three years: remote-first flexibility, supportive culture, and leadership accessibility.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#161929;border:0.5px solid #2A2D3E;border-radius:8px;padding:.9rem 1rem;">
+      <span style="font-size:15px;flex-shrink:0;">🏢</span>
+      <div><div style="font-size:13px;font-weight:500;color:#E8EAF0;margin-bottom:3px;">Department score shifts: 2H 2024 → 1H 2026</div><div style="font-size:12px;color:#9CA3AF;line-height:1.55;">Operations: 94.4 (2H 2024) → 62 (1H 2026) — significant drop, though still zero detractors. PE: 57.1 (2H 2024) → 66 (1H 2026) — notable recovery. Revenue: 66.7 (2H 2024) → 45 (1H 2026) — largest dept decline. Note: 2H 2024 report did not include Marketing as a separate department.</div></div>
+    </div>
+  </div>
+
+  <div class="sl" style="margin-top:1.5rem;">Comments leaders should have visibility on</div>
+  <div style="font-size:13px;color:#9CA3AF;margin-bottom:1rem;">Selected verbatim responses from the 1H 2026 survey — drawn from across all four departments. These represent recurring or notable themes that warrant direct leadership attention.</div>
+
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;">
+
+    <div style="background:#1A1000;border:0.5px solid #3A2800;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#F5A623;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">Compensation &amp; career growth — most cited theme across all depts</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"We could have defined steps to advance my career and obtain new titles and salary increases. I'm not entirely sure what I need to achieve to become a senior developer. Having clear steps would make me feel much better."</div>
+      <div style="font-size:11px;color:#6B7280;">Product Engineering · Score 10 · 1–4 years</div>
+    </div>
+
+    <div style="background:#1A1000;border:0.5px solid #3A2800;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#F5A623;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">Compensation &amp; career growth</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"I have been given more responsibilities this year but it has not been considered for increase in compensation. I hope my effort and expanded scope are recognized."</div>
+      <div style="font-size:11px;color:#6B7280;">Operations · Score 8 · APAC</div>
+    </div>
+
+    <div style="background:#1A1000;border:0.5px solid #3A2800;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#F5A623;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">Compensation &amp; career growth</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"Pay and benefits aren't up to industry benchmarks and career growth isn't as attractive as well-funded similar sized SaaS companies."</div>
+      <div style="font-size:11px;color:#6B7280;">Revenue · Score 7 · NAMLAM · 1–4 years</div>
+    </div>
+
+    <div style="background:#190A0A;border:0.5px solid #3A1010;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#F87171;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">Revenue — quota &amp; direction concerns</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"Revenue plan needs more input and scrutiny. Feels like this year's plan was put together quickly with very little input from relevant stakeholders."</div>
+      <div style="font-size:11px;color:#6B7280;">Revenue · Score 7 · NAMLAM · 1–4 years</div>
+    </div>
+
+    <div style="background:#190A0A;border:0.5px solid #3A1010;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#F87171;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">Revenue — quota &amp; direction concerns</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"The targets for the teams are fairly high and when people are constantly missing it really brings down team morale."</div>
+      <div style="font-size:11px;color:#6B7280;">Revenue · Score 6 · Only detractor in 1H 2026</div>
+    </div>
+
+    <div style="background:#0A0F1A;border:0.5px solid #1A2744;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#60A5FA;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">Pace of change — cross-dept pattern</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"Lots of potential but too many knee-jerk changes that throw off focus."</div>
+      <div style="font-size:11px;color:#6B7280;">Revenue · Score 8 · NAMLAM</div>
+    </div>
+
+    <div style="background:#0A0F1A;border:0.5px solid #1A2744;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#60A5FA;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">Pace of change — cross-dept pattern</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"Change happens too fast with too little support or enablement. We're spread too thin, trying to do too much at once."</div>
+      <div style="font-size:11px;color:#6B7280;">Product Engineering · Score 9 · EMEA · 1–4 years</div>
+    </div>
+
+    <div style="background:#081208;border:0.5px solid #1A3A1A;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#6EE7B7;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">In-person meetups — repeated across all depts</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"Company sponsored team meetups for all employees — only leadership gets a chance to reunite. I find that unfair."</div>
+      <div style="font-size:11px;color:#6B7280;">Product Engineering · Score 8 · 1–4 years</div>
+    </div>
+
+    <div style="background:#081208;border:0.5px solid #1A3A1A;border-radius:10px;padding:1rem 1.25rem;">
+      <div style="font-size:10px;font-weight:500;color:#6EE7B7;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">In-person meetups — repeated across all depts</div>
+      <div style="font-size:13px;color:#D1D5DB;line-height:1.65;font-style:italic;margin-bottom:6px;">"I wish we could celebrate our wins more. Because we move so fast, when we win we don't always take the time to enjoy that."</div>
+      <div style="font-size:11px;color:#6B7280;">Revenue · Score 10 · NAMLAM</div>
+    </div>
+
   </div>
 
   <div class="footer" style="color:#4B5563;">Time Doctor · eNPS historical record · Oct 2020 – 1H 2026 · For executive reference</div>
@@ -900,26 +960,6 @@ function scoreBg(s) {
   return 'rgba(163,45,45,.25)';
 }
 
-// Build table rows
-const tbody = document.getElementById('history-rows');
-histData.forEach(r => {
-  const isCurrentRow = r.current ? 'background:#1A2744;' : '';
-  const currentBadge = r.current ? '<span style="font-size:10px;font-weight:500;padding:1px 6px;border-radius:4px;background:rgba(96,165,250,.15);color:#60A5FA;margin-left:6px;">current</span>' : '';
-  const changeHtml = r.change === null
-    ? '<span style="color:#4B5563;">—</span>'
-    : `<span style="font-size:12px;font-weight:500;color:${r.change >= 0 ? '#7DC654' : '#F87171'};">${r.change >= 0 ? '+' : ''}${r.change.toFixed(2)}%</span>`;
-  const scoreColor2 = scoreColor(r.score);
-  const scoreBg2 = scoreBg(r.score);
-  tbody.innerHTML += `<tr style="border-bottom:0.5px solid #2A2D3E;${isCurrentRow}">
-    <td style="padding:10px 12px;color:#4B5563;font-size:12px;">${r.order}</td>
-    <td style="padding:10px 12px;color:#E8EAF0;font-weight:${r.current?'500':'400'};">${r.period}${currentBadge}</td>
-    <td style="padding:10px 12px;text-align:right;">${changeHtml}</td>
-    <td style="padding:10px 12px;text-align:right;">
-      <span style="font-size:13px;font-weight:500;padding:3px 12px;border-radius:6px;background:${scoreBg2};color:${scoreColor2};">${r.score.toFixed(2)}</span>
-    </td>
-  </tr>`;
-});
-
 // History line chart — only render when view becomes active
 let histChartRendered = false;
 const origShowView = showView;
@@ -930,7 +970,30 @@ window.showView = function(id, btn) {
     const labels = histData.map(r => r.period);
     const scores = histData.map(r => r.score);
     const pointColors = scores.map((s, i) => histData[i].current ? '#60A5FA' : scoreColor(s));
-    const pointRadii = scores.map((s, i) => histData[i].current ? 7 : 4);
+    const pointRadii = scores.map((s, i) => histData[i].current ? 8 : 5);
+
+    // Register datalabels plugin inline
+    Chart.register({
+      id: 'customLabels',
+      afterDatasetsDraw(chart) {
+        const ctx = chart.ctx;
+        chart.data.datasets.forEach((dataset, i) => {
+          const meta = chart.getDatasetMeta(i);
+          meta.data.forEach((point, idx) => {
+            const score = dataset.data[idx];
+            const isCurrent = histData[idx].current;
+            ctx.save();
+            ctx.font = `${isCurrent ? '600' : '500'} 10px -apple-system, sans-serif`;
+            ctx.fillStyle = isCurrent ? '#60A5FA' : pointColors[idx];
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(score % 1 === 0 ? score : score.toFixed(1), point.x, point.y - 8);
+            ctx.restore();
+          });
+        });
+      }
+    });
+
     new Chart(document.getElementById('historyChart'), {
       type: 'line',
       data: {
@@ -939,13 +1002,13 @@ window.showView = function(id, btn) {
           data: scores,
           borderColor: '#A78BFA',
           borderWidth: 2,
-          backgroundColor: 'rgba(167,139,250,.08)',
+          backgroundColor: 'rgba(167,139,250,.06)',
           fill: true,
-          tension: 0.35,
+          tension: 0.3,
           pointBackgroundColor: pointColors,
           pointBorderColor: pointColors,
           pointRadius: pointRadii,
-          pointHoverRadius: 8,
+          pointHoverRadius: 9,
         }]
       },
       options: {
@@ -955,7 +1018,11 @@ window.showView = function(id, btn) {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: ctx => ` eNPS: ${ctx.raw}`,
+              label: ctx => {
+                const r = histData[ctx.dataIndex];
+                const chg = r.change !== null ? ` · ${r.change >= 0 ? '+' : ''}${r.change}% vs prev` : '';
+                return ` eNPS: ${ctx.raw}${chg}`;
+              },
               title: ctx => ctx[0].label,
             }
           }
@@ -966,11 +1033,12 @@ window.showView = function(id, btn) {
             ticks: { color: '#6B7280', font: { size: 10 }, maxRotation: 45 }
           },
           y: {
-            min: 30, max: 90,
+            min: 30, max: 95,
             grid: { color: 'rgba(255,255,255,0.04)' },
             ticks: { color: '#6B7280', font: { size: 11 } }
           }
-        }
+        },
+        layout: { padding: { top: 20 } }
       }
     });
   }
