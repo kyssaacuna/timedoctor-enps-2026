@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eNPS 1H 2026 — Leaders Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#FBF7F2;color:#3D2B1A;min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:#FFFCF8;border-bottom:0.5px solid #D9C9B8;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#7C5635,#B08060);display:flex;align-items:center;justify-content:center;}
+.logo-icon svg{width:18px;height:18px;}
+.logo-name{font-size:15px;font-weight:500;color:#3D2B1A;}
+.logo-sep{width:1px;height:20px;background:#D9C9B8;margin:0 6px;}
+.logo-sub{font-size:13px;color:#9B7E5E;}
+.top-right{display:flex;align-items:center;gap:10px;}
+.tbadge{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:500;}
+.tbadge-gr{background:rgba(45,106,31,.15);color:#2D6A1F;border:0.5px solid rgba(59,109,17,.4);}
+.tbadge-am{background:rgba(186,117,23,.12);color:#7A4500;border:0.5px solid rgba(186,117,23,.35);}
+
+/* NAV */
+.sidenav{position:fixed;left:0;top:60px;width:200px;height:calc(100vh - 60px);background:#FFFCF8;border-right:0.5px solid #D9C9B8;padding:1.5rem 1rem;z-index:100;overflow-y:auto;}
+.nav-label{font-size:10px;font-weight:600;color:#B89B7A;letter-spacing:.09em;text-transform:uppercase;margin-bottom:8px;padding:0 8px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:#8B6E52;margin-bottom:2px;transition:all .15s;}
+.nav-item:hover{background:#EDE4D8;color:#3D2B1A;}
+.nav-item.active{background:#F5EEE6;color:#7C5635;font-weight:500;}
+.nav-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* MAIN */
+.main{margin-left:200px;padding:2rem;}
+.view{display:none;}.view.active{display:block;}
+
+/* CARDS */
+.sl{font-size:10px;font-weight:600;color:#B89B7A;letter-spacing:.09em;text-transform:uppercase;margin-bottom:12px;}
+.card{background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:12px;padding:1.25rem;}
+.mc{background:#F5EEE6;border-radius:8px;padding:1rem;}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem;}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:1.5rem;}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:1.5rem;}
+@media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr);}.g2,.g3{grid-template-columns:1fr;}}
+.ml{font-size:12px;color:#9B7E5E;margin-bottom:4px;}
+.mv{font-size:30px;font-weight:500;line-height:1.1;}
+.ms{font-size:11px;color:#B89B7A;margin-top:4px;}
+.divider{border:none;border-top:0.5px solid #D9C9B8;margin:1.5rem 0;}
+
+/* DEPT CARDS */
+.dept-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:1.5rem;}
+.dc{background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:12px;padding:1rem;border-top-width:3px;cursor:pointer;transition:all .2s;}
+.dc:hover{background:#F5EEE6;transform:translateY(-2px);}
+.dc.sel{background:#F5EEE6;border-color:#A0714F;}
+.dc-name{font-size:12px;font-weight:500;color:#8B6E52;margin-bottom:6px;}
+.dc-enps{font-size:26px;font-weight:500;}
+.dc-sub{font-size:11px;color:#B89B7A;margin-bottom:8px;}
+
+/* DRIVERS */
+.dr{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.dl{font-size:12px;color:#8B6E52;width:175px;flex-shrink:0;}
+.dt{flex:1;height:7px;background:#EDE4D8;border-radius:4px;overflow:visible;position:relative;}
+.df{height:100%;border-radius:4px;}
+.ds{font-size:12px;font-weight:500;width:34px;text-align:right;flex-shrink:0;}
+
+/* QUOTES */
+.qc{border-left:2px solid #D9C9B8;padding:.6rem .9rem;margin-bottom:8px;border-radius:0 6px 6px 0;background:#F5EEE6;}
+.qt{font-size:12px;color:#4A3522;line-height:1.6;font-style:italic;}
+.qs{font-size:11px;color:#B89B7A;margin-top:4px;}
+.qc.r{border-left-color:#E24B4A;}.qc.g{border-left-color:#3B6D11;}.qc.a{border-left-color:#EF9F27;}
+
+/* TABS */
+.tab-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;}
+.tab{font-size:12px;padding:5px 12px;border-radius:6px;border:0.5px solid #D9C9B8;background:transparent;color:#9B7E5E;cursor:pointer;transition:all .15s;}
+.tab:hover{background:#EDE4D8;color:#3D2B1A;}
+.tab.active{background:#F5EEE6;color:#7C5635;border-color:#A0714F;font-weight:500;}
+.qp{display:none;}.qp.active{display:block;}
+
+/* PILLS */
+.pill{display:inline-block;font-size:11px;padding:3px 9px;border-radius:20px;margin:2px;font-weight:500;}
+
+/* PRIORITY BARS */
+.pr{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.pl{font-size:12px;color:#8B6E52;width:195px;flex-shrink:0;}
+.pt2{flex:1;height:8px;background:#EDE4D8;border-radius:4px;overflow:hidden;}
+.pf{height:100%;border-radius:4px;}
+.pp{font-size:12px;font-weight:500;color:#9B7E5E;width:36px;text-align:right;flex-shrink:0;}
+.ptag{font-size:10px;font-weight:500;padding:2px 6px;border-radius:4px;flex-shrink:0;}
+
+/* DIST */
+.dist{display:flex;gap:3px;height:24px;border-radius:6px;overflow:hidden;margin-bottom:10px;}
+.lr{display:flex;flex-wrap:wrap;gap:10px;}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#9B7E5E;}
+.ld{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
+
+/* INSIGHT */
+.insight{border-radius:10px;padding:1rem 1.25rem;margin-top:1.5rem;border:0.5px solid;}
+
+/* VS LEGEND */
+.vsl{display:flex;gap:14px;margin-bottom:12px;}
+.vsi{display:flex;align-items:center;gap:5px;font-size:11px;color:#9B7E5E;}
+
+/* BADGES */
+.badge{display:inline-block;font-size:11px;padding:3px 9px;border-radius:6px;font-weight:500;}
+.b-gr{background:rgba(59,109,17,.2);color:#2D6A1F;}.b-am{background:rgba(186,117,23,.2);color:#A05C00;}.b-re{background:rgba(162,45,45,.2);color:#C0392B;}.b-bl{background:rgba(124,86,53,.2);color:#7C5635;}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;}
+.sh-title{font-size:20px;font-weight:500;color:#3D2B1A;}
+.sh-sub{font-size:12px;color:#9B7E5E;margin-top:2px;}
+
+/* FOOTER */
+.footer{text-align:center;font-size:12px;color:#D9C9B8;padding:2rem 0 3rem;margin-top:1rem;}
+
+/* SCORE TABLE */
+.strow{display:flex;align-items:center;gap:12px;padding:.65rem 0;border-bottom:0.5px solid #EDE4D8;}
+.strow:last-child{border-bottom:none;}
+.stlabel{font-size:13px;color:#3D2B1A;width:200px;flex-shrink:0;}
+.sttrack{flex:1;height:8px;background:#EDE4D8;border-radius:4px;overflow:hidden;}
+.stfill{height:100%;border-radius:4px;}
+.stval{font-size:12px;font-weight:500;width:34px;text-align:right;flex-shrink:0;}
+.stdiff{font-size:11px;font-weight:500;padding:1px 6px;border-radius:4px;width:40px;text-align:center;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon"><svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="#fff" stroke-width="1.5"/><path d="M6 9l2.5 2.5L13 6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <span class="logo-name">Time Doctor</span>
+    <div class="logo-sep"></div>
+    <span class="logo-sub">eNPS 1H 2026 — Leaders Dashboard</span>
+  </div>
+  <div class="top-right">
+    <span class="tbadge tbadge-gr">Overall eNPS · 58</span>
+    <span class="tbadge tbadge-am">April 2026 · Confidential</span>
+  </div>
+</div>
+
+<div class="sidenav">
+  <div class="nav-label">Overview</div>
+  <div class="nav-item active" onclick="showView('overview',this)">
+    <span style="width:8px;height:8px;border-radius:50%;background:#7C5635;flex-shrink:0;"></span>
+    Company overview
+  </div>
+  <div style="height:16px;"></div>
+  <div class="nav-label">By department</div>
+  <div class="nav-item" onclick="showView('pe',this)">
+    <span class="nav-dot" style="background:#3B82F6;"></span>Product Engineering
+  </div>
+  <div class="nav-item" onclick="showView('ops',this)">
+    <span class="nav-dot" style="background:#1D9E75;"></span>Operations
+  </div>
+  <div class="nav-item" onclick="showView('rev',this)">
+    <span class="nav-dot" style="background:#F5A623;"></span>Revenue
+  </div>
+  <div class="nav-item" onclick="showView('mkt',this)">
+    <span class="nav-dot" style="background:#7F77DD;"></span>Marketing
+  </div>
+  <div style="height:16px;"></div>
+  <div class="nav-label">Historical</div>
+  <div class="nav-item" onclick="showView('history',this)">
+    <span class="nav-dot" style="background:#A78BFA;"></span>
+    Past eNPS results
+  </div>
+  <div style="height:20px;border-top:0.5px solid #D9C9B8;margin-top:1rem;padding-top:1rem;">
+    <div style="font-size:11px;color:#B89B7A;line-height:1.6;">People &amp; Culture<br>Happiness Titans<br>April 2026</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ============ OVERVIEW ============ -->
+<div id="view-overview" class="view active">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Company-wide results</div>
+      <div class="sh-sub">eNPS 1H 2026 · 125 responses · 135 team members · 40+ countries</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="badge b-gr">87% participation</span>
+      <span class="badge b-gr">eNPS 58</span>
+    </div>
+  </div>
+
+  <div class="sl">At a glance</div>
+  <div class="g4">
+    <div class="mc"><div class="ml">Overall eNPS</div><div class="mv" style="color:#7C5635;">58</div><div class="ms">Apr 2026 · 1H survey</div></div>
+    <div class="mc"><div class="ml">Avg recommend score</div><div class="mv" style="color:#7C5635;">8.78<span style="font-size:14px;color:#B89B7A;"> /10</span></div><div class="ms">Mean across 125 responses</div></div>
+    <div class="mc"><div class="ml">Participation rate</div><div class="mv" style="color:#2D6A1F;">87%</div><div class="ms">125 of ~135 team members</div></div>
+    <div class="mc"><div class="ml">Completed responses</div><div class="mv" style="color:#2D6A1F;">116</div><div class="ms">9 partial · 0 disqualified</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="sl">Response distribution</div>
+      <div class="dist">
+        <div style="flex:75;background:#3B6D11;"></div>
+        <div style="flex:47;background:#BA7517;"></div>
+        <div style="flex:3;background:#A32D2D;"></div>
+      </div>
+      <div class="lr">
+        <span class="li"><span class="ld" style="background:#3B6D11;"></span>Promoters (9–10) · 75 · 60%</span>
+        <span class="li"><span class="ld" style="background:#BA7517;"></span>Passives (7–8) · 47 · 38%</span>
+        <span class="li"><span class="ld" style="background:#A32D2D;"></span>Detractors (0–6) · 3 · 2%</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sl">Score distribution</div>
+      <div style="position:relative;width:100%;height:90px;"><canvas id="oc" role="img" aria-label="Overall score distribution.">Score 6:3, 7:16, 8:31, 9:30, 10:45.</canvas></div>
+    </div>
+  </div>
+
+  <div class="sl">eNPS by department</div>
+  <div class="dept-row">
+    <div class="dc" style="border-top-color:#3B82F6;" onclick="showView('pe',document.querySelector('[onclick*=pe]'))">
+      <div class="dc-name">Product Engineering</div>
+      <div class="dc-enps" style="color:#3B82F6;">66</div>
+      <div class="dc-sub">9.02 avg · n=50 · 70% promoters</div>
+      <span class="badge b-gr" style="font-size:10px;">Top performer</span>
+    </div>
+    <div class="dc" style="border-top-color:#1D9E75;" onclick="showView('ops',document.querySelector('[onclick*=ops]'))">
+      <div class="dc-name">Operations</div>
+      <div class="dc-enps" style="color:#1D9E75;">62</div>
+      <div class="dc-sub">8.77 avg · n=26 · 0 detractors</div>
+      <span class="badge b-gr" style="font-size:10px;">Zero detractors</span>
+    </div>
+    <div class="dc" style="border-top-color:#7F77DD;" onclick="showView('mkt',document.querySelector('[onclick*=mkt]'))">
+      <div class="dc-name">Marketing</div>
+      <div class="dc-enps" style="color:#7F77DD;">60</div>
+      <div class="dc-sub">8.80 avg · n=10 · 0 detractors</div>
+      <span class="badge b-am" style="font-size:10px;">Small sample</span>
+    </div>
+    <div class="dc" style="border-top-color:#A05C00;" onclick="showView('rev',document.querySelector('[onclick*=rev]'))">
+      <div class="dc-name">Revenue</div>
+      <div class="dc-enps" style="color:#A05C00;">45</div>
+      <div class="dc-sub">8.55 avg · n=22 · 45% passives</div>
+      <span class="badge b-am" style="font-size:10px;">Needs focus</span>
+    </div>
+  </div>
+  <div style="font-size:11px;color:#B89B7A;margin-bottom:1.5rem;">↑ Click any department card to view their detailed results</div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="sl">Department eNPS comparison</div>
+      <div style="position:relative;width:100%;height:180px;"><canvas id="dc" role="img" aria-label="Dept eNPS bar chart.">PE 66, Ops 62, Mktg 60, Revenue 45.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="sl">Company-wide driver scores</div>
+      <div id="ov-drivers"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div class="sl">What the company wants improved · 116 responses</div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="pr"><span class="pl">Career growth</span><div class="pt2"><div class="pf" style="width:36%;background:#EF9F27;"></div></div><span class="pp">36%</span><span class="ptag b-re" style="font-size:10px;padding:2px 6px;border-radius:4px;background:rgba(162,45,45,.15);color:#C0392B;">#1 priority</span></div>
+    <div class="pr"><span class="pl">Team connection</span><div class="pt2"><div class="pf" style="width:27%;background:#1D9E75;"></div></div><span class="pp">27%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">#2</span></div>
+    <div class="pr"><span class="pl">Tools &amp; processes</span><div class="pt2"><div class="pf" style="width:20%;background:#7F77DD;"></div></div><span class="pp">20%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">#3</span></div>
+    <div class="pr"><span class="pl">Leadership &amp; communication</span><div class="pt2"><div class="pf" style="width:14%;background:#7C5635;"></div></div><span class="pp">14%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">#4</span></div>
+    <div class="pr"><span class="pl">Workload / balance</span><div class="pt2"><div class="pf" style="width:3%;background:#E24B4A;"></div></div><span class="pp">3%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">#5</span></div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+      <div class="sl">Compensation scores by team</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:12px;color:#8B6E52;">Operations</span><span style="font-size:12px;font-weight:500;color:#E24B4A;">3.35</span></div><div class="sttrack"><div class="stfill" style="width:67%;background:#E24B4A;"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:12px;color:#8B6E52;">Marketing</span><span style="font-size:12px;font-weight:500;color:#E24B4A;">3.40</span></div><div class="sttrack"><div class="stfill" style="width:68%;background:#E24B4A;"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:12px;color:#8B6E52;">Revenue</span><span style="font-size:12px;font-weight:500;color:#A05C00;">3.82</span></div><div class="sttrack"><div class="stfill" style="width:76%;background:#F5A623;"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:12px;color:#8B6E52;">Product Engineering</span><span style="font-size:12px;font-weight:500;color:#A05C00;">3.90</span></div><div class="sttrack"><div class="stfill" style="width:78%;background:#F5A623;"></div></div></div>
+        <div style="border-top:0.5px dashed #D9C9B8;padding-top:8px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:12px;color:#9B7E5E;font-style:italic;">Company avg</span><span style="font-size:12px;font-weight:500;color:#9B7E5E;">3.66</span></div><div style="font-size:11px;color:#B89B7A;">Lowest driver company-wide</div></div>
+      </div>
+  </div>
+
+  <hr class="divider">
+  <div class="sl">Executive highlights</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;">
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">🟢</span>
+      <div><div style="font-size:13px;color:#3D2B1A;line-height:1.6;">eNPS score: 58. Promoters: 75 (60%). Passives: 47 (38%). Detractors: 3 (2%). Participation: 87% of ~135 team members across 40+ countries.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">🟢</span>
+      <div><div style="font-size:13px;color:#3D2B1A;line-height:1.6;">Manager support (4.60/5) and leadership trust (4.35/5) are Time Doctor's two strongest company-wide drivers — a direct reflection of how leadership shows up for the team.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">🟢</span>
+      <div><div style="font-size:13px;color:#3D2B1A;line-height:1.6;">87% participation across a 135-person, 40+ country workforce is exceptional for a fully async survey — signals high psychological safety and trust in the process.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">🟡</span>
+      <div><div style="font-size:13px;color:#3D2B1A;line-height:1.6;">Compensation is the single most consistently flagged concern across all four departments, scoring 3.66/5 company-wide — the lowest driver. The issue is less about pay levels and more about the opacity of increment criteria and the absence of transparent career progression tiers.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">🟡</span>
+      <div><div style="font-size:13px;color:#3D2B1A;line-height:1.6;">Career growth was the #1 improvement priority at 36% of responses — with Operations at 62% making it their overwhelming top ask. A company-wide career framework with visible levels and criteria would address this directly.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">🟡</span>
+      <div><div style="font-size:13px;color:#3D2B1A;line-height:1.6;">Team connection (27% of responses) reflects a consistent desire for more human touchpoints in a remote-first environment. In-person meetups were cited positively where they occurred — and negatively where they feel inaccessible to non-leadership.</div></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem;">
+      <span style="font-size:16px;flex-shrink:0;margin-top:1px;">🔴</span>
+      <div><div style="font-size:13px;color:#3D2B1A;line-height:1.6;">Revenue has the lowest eNPS (45) and the lowest scores on decision context (3.82) and workload sustainability (3.86). Multiple respondents flagged that the revenue plan lacked stakeholder input and that quota attainment gaps are hurting morale. This team requires focused leadership attention in H2.</div></div>
+    </div>
+  </div>
+
+  <div class="insight" style="background:#F5EEE6;border-color:#C9A882;">
+    <div style="font-size:13px;font-weight:500;color:#7C5635;margin-bottom:6px;">Summary</div>
+    <div style="font-size:13px;color:#5C3D22;line-height:1.7;">eNPS: 58. Participation: 87% (125 of ~135). Average recommend score: 8.78 / 10. Promoters: 75 (60%). Passives: 47 (38%). Detractors: 3 (2%). Completed responses: 116. Partial: 9. Top improvement priorities cited: career growth (36%), team connection (27%), tools &amp; processes (20%), leadership &amp; communication (14%), workload/balance (3%). Lowest-scoring driver company-wide: compensation (3.66 / 5).</div>
+  </div>
+
+  <div style="margin-top:1.5rem;" class="sl">Top 3 focus areas per department</div>
+  <div style="font-size:13px;color:#8B6E52;margin-bottom:1.25rem;">What each team most needs to improve — based directly on their responses. Click a department in the sidebar to see the full breakdown.</div>
+
+  <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:1.5rem;">
+
+    <!-- PE -->
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:12px;overflow:hidden;">
+      <div style="background:#F5EEE6;padding:.75rem 1.25rem;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid #D9C9B8;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#3B82F6;flex-shrink:0;"></span>
+        <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Product Engineering</span>
+        <span style="font-size:11px;color:#7C5635;margin-left:auto;">eNPS 66 · Top performer</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+        <div style="padding:1rem 1.25rem;border-right:0.5px solid #D9C9B8;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(162,45,45,.2);color:#C0392B;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Career path clarity</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">Team members — especially those with 5+ years — don't know what the path to senior or principal looks like. Defined levels and criteria would make a significant difference.</div>
+        </div>
+        <div style="padding:1rem 1.25rem;border-right:0.5px solid #D9C9B8;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(186,117,23,.2);color:#8B5E00;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">In-person connection</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">38% said team connection is the #1 thing to improve. The team wants more live moments — both virtual and in-person — not fewer.</div>
+        </div>
+        <div style="padding:1rem 1.25rem;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(186,117,23,.2);color:#8B5E00;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Compensation transparency</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">Compensation scored 3.90 — the lowest driver. Long-tenured engineers feel their salary hasn't kept pace with their growing responsibilities.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OPS -->
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:12px;overflow:hidden;">
+      <div style="background:#DDF0E8;padding:.75rem 1.25rem;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid #B8D8C8;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#1D9E75;flex-shrink:0;"></span>
+        <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Operations</span>
+        <span style="font-size:11px;color:#1A5C35;margin-left:auto;">eNPS 62 · Zero detractors</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+        <div style="padding:1rem 1.25rem;border-right:0.5px solid #D9C9B8;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(162,45,45,.2);color:#C0392B;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Compensation transparency</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">62% flagged career growth — the highest rate across all teams. Almost all traces to one thing: people don't understand how salary increases are decided.</div>
+        </div>
+        <div style="padding:1rem 1.25rem;border-right:0.5px solid #D9C9B8;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(186,117,23,.2);color:#8B5E00;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Performance development cadence</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">Team members want clearer feedback loops and defined growth milestones — so they know what "great" looks like and how they're tracking.</div>
+        </div>
+        <div style="padding:1rem 1.25rem;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(186,117,23,.2);color:#8B5E00;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Learning &amp; development access</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">Multiple respondents asked for structured upskilling, AI training, and paid course access. Even a small L&amp;D budget signals investment in growth.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKETING -->
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:12px;overflow:hidden;">
+      <div style="background:#F2EEF8;padding:.75rem 1.25rem;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid #D9C9B8;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#7F77DD;flex-shrink:0;"></span>
+        <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Marketing</span>
+        <span style="font-size:11px;color:#A5B4FC;margin-left:auto;">eNPS 60 · Small sample n=10 · directional</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+        <div style="padding:1rem 1.25rem;border-right:0.5px solid #D9C9B8;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(162,45,45,.2);color:#C0392B;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Cross-functional visibility</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">The team feels siloed — they want other departments to see their work, and vice versa. A spotlight at all-hands would go a long way.</div>
+        </div>
+        <div style="padding:1rem 1.25rem;border-right:0.5px solid #D9C9B8;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(186,117,23,.2);color:#8B5E00;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Career path definition</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">Career growth and leadership &amp; communication were tied at 30% — both pointing to a need for clearer structure and visible growth criteria.</div>
+        </div>
+        <div style="padding:1rem 1.25rem;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(186,117,23,.2);color:#8B5E00;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Strategic project clarity</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">Projects were launched before goals were fully defined, leading to rework. Earlier risk-surfacing and alignment would reduce friction.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:12px;overflow:hidden;">
+      <div style="background:#FDF5E6;padding:.75rem 1.25rem;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid #D9C9B8;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#F5A623;flex-shrink:0;"></span>
+        <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Revenue</span>
+        <span style="font-size:11px;color:#8B5E00;margin-left:auto;">eNPS 45 · Needs focused attention</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;">
+        <div style="padding:1rem 1.25rem;border-right:0.5px solid #D9C9B8;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(162,45,45,.2);color:#C0392B;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Decision context &amp; quota clarity</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">Leadership &amp; communication cited at double the company average — pointing to the "why" behind strategic decisions and quota-setting specifically.</div>
+        </div>
+        <div style="padding:1rem 1.25rem;border-right:0.5px solid #D9C9B8;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(162,45,45,.2);color:#C0392B;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Process documentation &amp; ownership</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">With 23% of the team under 1 year tenure, undocumented processes and unclear ownership create friction that slows people down and erodes confidence.</div>
+        </div>
+        <div style="padding:1rem 1.25rem;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <span style="width:20px;height:20px;border-radius:50%;background:rgba(186,117,23,.2);color:#8B5E00;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>
+            <span style="font-size:13px;font-weight:500;color:#3D2B1A;">Celebrating wins</span>
+          </div>
+          <div style="font-size:12px;color:#8B6E52;line-height:1.55;">Even a promoter said: "We move so fast, when we win we don't always take the time to enjoy that." A win-celebration ritual costs nothing and has outsized morale impact.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">Time Doctor · eNPS 1H 2026 · People & Culture · Confidential · For leaders reference</div>
+</div>
+
+<!-- ============ PE ============ -->
+<div id="view-pe" class="view">
+  <div class="sh">
+    <div><div class="sh-title">Product Engineering</div><div class="sh-sub">50 respondents · eNPS 66 · Avg 9.02 · Top performer</div></div>
+    <span class="badge b-gr">eNPS 66 · Highest</span>
+  </div>
+  <div class="g4">
+    <div class="mc"><div class="ml">eNPS</div><div class="mv" style="color:#3B82F6;">66</div><div class="ms">Company avg: 58</div></div>
+    <div class="mc"><div class="ml">Avg score</div><div class="mv" style="color:#3B82F6;">9.02<span style="font-size:14px;color:#B89B7A;"> /10</span></div><div class="ms">Highest across departments</div></div>
+    <div class="mc"><div class="ml">Promoters</div><div class="mv" style="color:#2D6A1F;">35</div><div class="ms">70% · scores 9–10</div></div>
+    <div class="mc"><div class="ml">Detractors</div><div class="mv" style="color:#A05C00;">2</div><div class="ms">4% · both scored 6</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="sl">Driver scores vs company average</div>
+      <div class="vsl"><span class="vsi"><span style="width:10px;height:3px;background:#3B82F6;border-radius:2px;display:inline-block;"></span>Product Engineering</span><span class="vsi"><span style="width:10px;height:0;border-top:2px dashed #B89B7A;display:inline-block;"></span>Company avg</span></div>
+      <div id="pe-dv"></div>
+    </div>
+    <div class="card">
+      <div class="sl">What they want improved</div>
+      <div class="pr"><span class="pl">Team connection</span><div class="pt2"><div class="pf" style="width:38%;background:#1D9E75;"></div></div><span class="pp">38%</span><span class="ptag b-re" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 27% avg</span></div>
+      <div class="pr"><span class="pl">Career growth</span><div class="pt2"><div class="pf" style="width:28%;background:#EF9F27;"></div></div><span class="pp">28%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">vs 36% avg</span></div>
+      <div class="pr"><span class="pl">Tools &amp; processes</span><div class="pt2"><div class="pf" style="width:20%;background:#7F77DD;"></div></div><span class="pp">20%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">vs 20% avg</span></div>
+      <div class="pr"><span class="pl">Leadership &amp; comms</span><div class="pt2"><div class="pf" style="width:12%;background:#7C5635;"></div></div><span class="pp">12%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">vs 14% avg</span></div>
+      <div class="pr"><span class="pl">Workload / balance</span><div class="pt2"><div class="pf" style="width:2%;background:#E24B4A;"></div></div><span class="pp">2%</span><span class="ptag b-gr" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 3% avg</span></div>
+      <div style="margin-top:1rem;"><div class="sl">Feedback themes</div>
+        <div style="margin-bottom:6px;"><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">career ladder ambiguity</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">salary appraisals</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">pace of change</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">in-person deficit</span></div>
+        <div><span class="pill" style="background:rgba(59,109,17,.15);color:#2D6A1F;">async-first culture</span><span class="pill" style="background:rgba(59,109,17,.15);color:#2D6A1F;">autonomy &amp; ownership</span><span class="pill" style="background:rgba(59,109,17,.15);color:#2D6A1F;">AI adoption</span><span class="pill" style="background:rgba(59,109,17,.15);color:#2D6A1F;">roadmap clarity</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="sl">Voice of the team</div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="showQ('pe-r',this,'pe-tabs')">Watch areas</button>
+    <button class="tab" onclick="showQ('pe-g',this,'pe-tabs')">Positive</button>
+  </div>
+  <div id="pe-r" class="qp active pe-tabs"><div class="g2">
+    <div>
+      <div class="qc r"><div class="qt">"We could have defined steps to advance my career. I'm not entirely sure what I need to achieve to become a senior developer. Having clear steps would make me feel better."</div><div class="qs">Score 10 · EMEA · 1–4 years</div></div>
+      <div class="qc r"><div class="qt">"Company sponsored team meetups for all employees — only leadership gets a chance to reunite. I find that unfair."</div><div class="qs">Score 8 · 1–4 years</div></div>
+    </div>
+    <div>
+      <div class="qc r"><div class="qt">"Salary appraisals are LONG overdue, especially given current economic strain."</div><div class="qs">Score 8 · APAC · 5+ years</div></div>
+      <div class="qc r"><div class="qt">"Change happens too fast with too little support or enablement. We're spread too thin, trying to do too much at once."</div><div class="qs">Score 9 · EMEA · 1–4 years</div></div>
+    </div>
+  </div></div>
+  <div id="pe-g" class="qp pe-tabs"><div class="g2">
+    <div>
+      <div class="qc g"><div class="qt">"It's a combination of the people, the autonomy, and the substance of the work. I'm trusted to run my area the way I think it should be run and surrounded by people I genuinely respect."</div><div class="qs">Score 10 · EMEA · 5+ years</div></div>
+      <div class="qc g"><div class="qt">"Async culture, without question. Decisions land in writing, meetings exist only when they're worth it, and time zones aren't treated as a blocker."</div><div class="qs">Score 9 · EMEA · 1–4 years</div></div>
+    </div>
+    <div>
+      <div class="qc g"><div class="qt">"I went through a difficult period in my personal life last year. Both the team and the company were there for me. Encountering such a people-oriented approach made me feel very happy."</div><div class="qs">Score 10 · EMEA · 1–4 years</div></div>
+      <div class="qc g"><div class="qt">"One of the most impressive things Time Doctor does is the transparency of our product roadmap and its alignment with actual engineering capabilities."</div><div class="qs">Score 10 · APAC · 5+ years</div></div>
+    </div>
+  </div></div>
+  <div class="insight" style="background:#F5EEE6;border-color:#C9A882;">
+    <div style="font-size:13px;font-weight:500;color:#7C5635;margin-bottom:4px;">Product Engineering — data summary</div>
+    <div style="font-size:13px;color:#5C3D22;line-height:1.6;">eNPS: 66. Respondents: 50. Avg score: 9.02. Promoters: 35 (70%). Passives: 13 (26%). Detractors: 2 (4%). Lowest driver: compensation (3.90 / 5). Top improvement priority: team connection (38%), followed by career growth (28%). Tenure split: 56% have 5+ years. Region: 52% EMEA, 42% APAC.</div>
+  </div>
+  <div class="footer">Product Engineering · eNPS 1H 2026 · For leaders reference</div>
+</div>
+
+<!-- ============ OPS ============ -->
+<div id="view-ops" class="view">
+  <div class="sh">
+    <div><div class="sh-title">Operations</div><div class="sh-sub">26 respondents · eNPS 62 · Avg 8.77 · Zero detractors</div></div>
+    <span class="badge b-gr">Zero detractors</span>
+  </div>
+  <div class="g4">
+    <div class="mc"><div class="ml">eNPS</div><div class="mv" style="color:#1D9E75;">62</div><div class="ms">Company avg: 58</div></div>
+    <div class="mc"><div class="ml">Avg score</div><div class="mv" style="color:#1D9E75;">8.77<span style="font-size:14px;color:#B89B7A;"> /10</span></div><div class="ms">Above company avg</div></div>
+    <div class="mc"><div class="ml">Promoters</div><div class="mv" style="color:#2D6A1F;">16</div><div class="ms">62% · scores 9–10</div></div>
+    <div class="mc"><div class="ml">Detractors</div><div class="mv" style="color:#2D6A1F;">0</div><div class="ms">Only team with zero</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="sl">Driver scores vs company average</div>
+      <div class="vsl"><span class="vsi"><span style="width:10px;height:3px;background:#1D9E75;border-radius:2px;display:inline-block;"></span>Operations</span><span class="vsi"><span style="width:10px;height:0;border-top:2px dashed #B89B7A;display:inline-block;"></span>Company avg</span></div>
+      <div id="ops-dv"></div>
+    </div>
+    <div class="card">
+      <div class="sl">What they want improved</div>
+      <div class="pr"><span class="pl">Career growth</span><div class="pt2"><div class="pf" style="width:62%;background:#EF9F27;"></div></div><span class="pp">62%</span><span class="ptag b-re" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 36% avg</span></div>
+      <div class="pr"><span class="pl">Tools &amp; processes</span><div class="pt2"><div class="pf" style="width:19%;background:#7F77DD;"></div></div><span class="pp">19%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">vs 20% avg</span></div>
+      <div class="pr"><span class="pl">Team connection</span><div class="pt2"><div class="pf" style="width:15%;background:#1D9E75;"></div></div><span class="pp">15%</span><span class="ptag b-gr" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 27% avg</span></div>
+      <div class="pr"><span class="pl">Leadership &amp; comms</span><div class="pt2"><div class="pf" style="width:4%;background:#7C5635;"></div></div><span class="pp">4%</span><span class="ptag b-gr" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 14% avg</span></div>
+      <div style="margin-top:1rem;"><div class="sl">Feedback themes</div>
+        <div style="margin-bottom:6px;"><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">compensation transparency</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">no increment criteria</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">career ladder missing</span></div>
+        <div><span class="pill" style="background:rgba(29,158,117,.15);color:#1A5C35;">remote flexibility</span><span class="pill" style="background:rgba(29,158,117,.15);color:#1A5C35;">leadership transparency</span><span class="pill" style="background:rgba(29,158,117,.15);color:#1A5C35;">no micromanagement</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="sl">Voice of the team</div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="showQ('ops-r',this,'ops-tabs')">Primary concerns</button>
+    <button class="tab" onclick="showQ('ops-g',this,'ops-tabs')">Positive</button>
+  </div>
+  <div id="ops-r" class="qp active ops-tabs"><div class="g2">
+    <div>
+      <div class="qc r"><div class="qt">"Compensation — it appears the company does not have the habit of increasing salary. The increment should be made clear: 10%, 15%, 20% based on the requirement met in the performance review."</div><div class="qs">Score 8 · EMEA · 1–4 years</div></div>
+      <div class="qc r"><div class="qt">"I have been given more responsibilities this year but it has not been considered for increase in compensation. I hope my effort and expanded scope are recognized."</div><div class="qs">Score 8 · APAC</div></div>
+    </div>
+    <div>
+      <div class="qc r"><div class="qt">"Create a clearer, more consistent performance and development cadence — so everyone knows what 'great' looks like and what support is available to grow."</div><div class="qs">Score 9 · APAC · 5+ years</div></div>
+      <div class="qc r"><div class="qt">"Fully remote without many onsites is a drawback for career growth. Being part of onsite meetups and working sessions would help."</div><div class="qs">Score 7 · APAC · 5+ years</div></div>
+    </div>
+  </div></div>
+  <div id="ops-g" class="qp ops-tabs"><div class="g2">
+    <div>
+      <div class="qc g"><div class="qt">"We should keep doing internal movements before making the external decision of hiring — that means we're investing in our people and their development."</div><div class="qs">Score 9 · NAMLAM · 1–4 years</div></div>
+      <div class="qc g"><div class="qt">"The vision, the clarity, the synchronization with the team — what else does one need in professional life."</div><div class="qs">Score 10 · APAC · 1–4 years</div></div>
+    </div>
+    <div>
+      <div class="qc g"><div class="qt">"Time Doctor's remote-first culture and flexibility — the trust, autonomy, and focus on outcomes. Super-friendly team with a very high-level of respect for all."</div><div class="qs">Score 9 · NAMLAM · 5+ years</div></div>
+    </div>
+  </div></div>
+  <div class="insight" style="background:#EDF5EE;border-color:#A8CEB5;">
+    <div style="font-size:13px;font-weight:500;color:#1A5C35;margin-bottom:4px;">Operations — data summary</div>
+    <div style="font-size:13px;color:#2D5A3D;line-height:1.6;">eNPS: 62. Respondents: 26. Avg score: 8.77. Promoters: 16 (62%). Passives: 10 (38%). Detractors: 0. Lowest driver: compensation (3.35 / 5). Top improvement priority: career growth (62%) — highest rate across all departments. Tenure split: 58% have 1–4 years. Region: 54% APAC, 23% NAMLAM, 19% EMEA.</div>
+  </div>
+  <div class="footer">Operations · eNPS 1H 2026 · For leaders reference</div>
+</div>
+
+<!-- ============ REVENUE ============ -->
+<div id="view-rev" class="view">
+  <div class="sh">
+    <div><div class="sh-title">Revenue</div><div class="sh-sub">22 respondents · eNPS 45 · Avg 8.55 · Needs focused attention</div></div>
+    <span class="badge b-am">Lowest eNPS · 45</span>
+  </div>
+  <div class="g4">
+    <div class="mc"><div class="ml">eNPS</div><div class="mv" style="color:#A05C00;">45</div><div class="ms">Company avg: 58</div></div>
+    <div class="mc"><div class="ml">Avg score</div><div class="mv" style="color:#A05C00;">8.55<span style="font-size:14px;color:#B89B7A;"> /10</span></div><div class="ms">Below company avg</div></div>
+    <div class="mc"><div class="ml">Promoters</div><div class="mv" style="color:#2D6A1F;">11</div><div class="ms">50% · scores 9–10</div></div>
+    <div class="mc"><div class="ml">Passives</div><div class="mv" style="color:#A05C00;">10</div><div class="ms">45% — the key opportunity</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="sl">Driver scores vs company average</div>
+      <div class="vsl"><span class="vsi"><span style="width:10px;height:3px;background:#F5A623;border-radius:2px;display:inline-block;"></span>Revenue</span><span class="vsi"><span style="width:10px;height:0;border-top:2px dashed #B89B7A;display:inline-block;"></span>Company avg</span></div>
+      <div id="rev-dv"></div>
+    </div>
+    <div class="card">
+      <div class="sl">What they want improved</div>
+      <div class="pr"><span class="pl">Leadership &amp; comms</span><div class="pt2"><div class="pf" style="width:27%;background:#7C5635;"></div></div><span class="pp">27%</span><span class="ptag b-re" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 14% avg</span></div>
+      <div class="pr"><span class="pl">Team connection</span><div class="pt2"><div class="pf" style="width:27%;background:#1D9E75;"></div></div><span class="pp">27%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">vs 27% avg</span></div>
+      <div class="pr"><span class="pl">Tools &amp; processes</span><div class="pt2"><div class="pf" style="width:18%;background:#7F77DD;"></div></div><span class="pp">18%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">vs 20% avg</span></div>
+      <div class="pr"><span class="pl">Career growth</span><div class="pt2"><div class="pf" style="width:18%;background:#EF9F27;"></div></div><span class="pp">18%</span><span class="ptag b-gr" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 36% avg</span></div>
+      <div class="pr"><span class="pl">Workload / balance</span><div class="pt2"><div class="pf" style="width:9%;background:#E24B4A;"></div></div><span class="pp">9%</span><span class="ptag b-am" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 3% avg</span></div>
+      <div style="margin-top:1rem;"><div class="sl">Feedback themes</div>
+        <div style="margin-bottom:6px;"><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">quota gaps</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">morale from missed targets</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">no process docs</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">too many changes</span></div>
+        <div><span class="pill" style="background:rgba(59,109,17,.15);color:#2D6A1F;">remote flexibility</span><span class="pill" style="background:rgba(59,109,17,.15);color:#2D6A1F;">great colleagues</span><span class="pill" style="background:rgba(59,109,17,.15);color:#2D6A1F;">accessible leadership</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="sl">Voice of the team</div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="showQ('rev-r',this,'rev-tabs')">Critical feedback</button>
+    <button class="tab" onclick="showQ('rev-g',this,'rev-tabs')">Positive</button>
+    <button class="tab" onclick="showQ('rev-a',this,'rev-tabs')">Mixed</button>
+  </div>
+  <div id="rev-r" class="qp active rev-tabs"><div class="g2">
+    <div>
+      <div class="qc r"><div class="qt">"Systems and processes with little to no documentation. There is a consistent delta between revenue attainment and quotas. I continue to run into scenarios where there is a lack of ownership."</div><div class="qs">Score 7 · NAMLAM · &lt;1 year</div></div>
+      <div class="qc r"><div class="qt">"The targets for the teams are fairly high and when people are constantly missing it really brings down team morale."</div><div class="qs">Score 6 · only detractor</div></div>
+    </div>
+    <div>
+      <div class="qc r"><div class="qt">"Revenue plan needs more input and scrutiny. Feels like this year's plan was put together quickly with very little input from relevant stakeholders."</div><div class="qs">Score 7 · NAMLAM · 1–4 years</div></div>
+      <div class="qc r"><div class="qt">"Lots of potential but too many knee jerk changes that throw off focus."</div><div class="qs">Score 8 · NAMLAM</div></div>
+    </div>
+  </div></div>
+  <div id="rev-g" class="qp rev-tabs"><div class="g2">
+    <div>
+      <div class="qc g"><div class="qt">"I value the flexibility and freedom here, along with clearly defined goals. The emphasis on coaching and career growth makes a real difference."</div><div class="qs">Score 10 · APAC · &lt;1 year</div></div>
+      <div class="qc g"><div class="qt">"The people at Time Doctor have been awesome. Collaborative, supportive, and willing to help. Support from the leadership team has also been great."</div><div class="qs">Score 7 · NAMLAM · &lt;1 year</div></div>
+    </div>
+    <div>
+      <div class="qc g"><div class="qt">"It's a company that genuinely values flexibility, trust, and results. I appreciate the culture of transparency and support for employee development."</div><div class="qs">Score 10 · APAC</div></div>
+    </div>
+  </div></div>
+  <div id="rev-a" class="qp rev-tabs"><div class="g2">
+    <div>
+      <div class="qc a"><div class="qt">"I wish we could celebrate our wins more. Because we move so fast, the stressful times are tough and when we win we don't always take the time to enjoy that."</div><div class="qs">Score 10 · NAMLAM</div></div>
+    </div>
+    <div>
+      <div class="qc a"><div class="qt">"I think we change our direction too often. I would like to see us stick to strategies longer to prove them right or wrong."</div><div class="qs">Score 8 · NAMLAM</div></div>
+    </div>
+  </div></div>
+  <div class="insight" style="background:#FDF5E6;border-color:#DEB887;">
+    <div style="font-size:13px;font-weight:500;color:#8B5E00;margin-bottom:4px;">Leadership insight</div>
+    <div style="font-size:13px;color:#5C3A00;line-height:1.6;">Revenue eNPS: 45. Respondents: 22. Promoters: 11 (50%). Passives: 10 (45%). Detractors: 1 (5%). Average score: 8.55. Lowest-scoring drivers: decision context (3.82) and workload sustainability (3.86). Leadership &amp; communication was the top improvement priority at 27% — double the company-wide rate of 14%. Multiple respondents cited quota attainment gaps and insufficient stakeholder input into the revenue plan.</div>
+  </div>
+  <div class="footer">Revenue · eNPS 1H 2026 · For leaders reference</div>
+</div>
+
+<!-- ============ MARKETING ============ -->
+<div id="view-mkt" class="view">
+  <div class="sh">
+    <div><div class="sh-title">Marketing</div><div class="sh-sub">10 respondents · eNPS 60 · Avg 8.80 · Small sample — directional only</div></div>
+    <span class="badge b-am">Small sample · n=10</span>
+  </div>
+  <div style="background:#1A1200;border:0.5px solid #3A2A00;border-radius:8px;padding:.75rem 1rem;margin-bottom:1.5rem;font-size:12px;color:#A05C00;">Note: With 10 respondents, findings are directional. Recommend a Q3 pulse check to validate before major structural decisions.</div>
+  <div class="g4">
+    <div class="mc"><div class="ml">eNPS</div><div class="mv" style="color:#7F77DD;">60</div><div class="ms">Company avg: 58</div></div>
+    <div class="mc"><div class="ml">Avg score</div><div class="mv" style="color:#7F77DD;">8.80<span style="font-size:14px;color:#B89B7A;"> /10</span></div><div class="ms">Above company avg</div></div>
+    <div class="mc"><div class="ml">Promoters</div><div class="mv" style="color:#2D6A1F;">6</div><div class="ms">60% · scores 9–10</div></div>
+    <div class="mc"><div class="ml">Detractors</div><div class="mv" style="color:#2D6A1F;">0</div><div class="ms">Clean sweep</div></div>
+  </div>
+  <div class="g2">
+    <div class="card">
+      <div class="sl">Driver scores vs company average</div>
+      <div class="vsl"><span class="vsi"><span style="width:10px;height:3px;background:#7F77DD;border-radius:2px;display:inline-block;"></span>Marketing</span><span class="vsi"><span style="width:10px;height:0;border-top:2px dashed #B89B7A;display:inline-block;"></span>Company avg</span></div>
+      <div id="mkt-dv"></div>
+    </div>
+    <div class="card">
+      <div class="sl">What they want improved</div>
+      <div class="pr"><span class="pl">Career growth</span><div class="pt2"><div class="pf" style="width:30%;background:#EF9F27;"></div></div><span class="pp">30%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">vs 36% avg</span></div>
+      <div class="pr"><span class="pl">Leadership &amp; comms</span><div class="pt2"><div class="pf" style="width:30%;background:#7C5635;"></div></div><span class="pp">30%</span><span class="ptag b-re" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 14% avg</span></div>
+      <div class="pr"><span class="pl">Team connection</span><div class="pt2"><div class="pf" style="width:20%;background:#1D9E75;"></div></div><span class="pp">20%</span><span class="ptag" style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EDE4D8;color:#9B7E5E;">vs 27% avg</span></div>
+      <div class="pr"><span class="pl">Tools &amp; processes</span><div class="pt2"><div class="pf" style="width:10%;background:#7F77DD;"></div></div><span class="pp">10%</span><span class="ptag b-gr" style="font-size:10px;padding:2px 6px;border-radius:4px;">vs 20% avg</span></div>
+      <div style="margin-top:1rem;"><div class="sl">Feedback themes</div>
+        <div style="margin-bottom:6px;"><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">cross-functional silos</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">lack of career paths</span><span class="pill" style="background:rgba(162,45,45,.15);color:#C0392B;">disorganized rollouts</span></div>
+        <div><span class="pill" style="background:rgba(127,119,221,.15);color:#A5B4FC;">AI adoption culture</span><span class="pill" style="background:rgba(127,119,221,.15);color:#A5B4FC;">transparency</span><span class="pill" style="background:rgba(127,119,221,.15);color:#A5B4FC;">autonomy &amp; trust</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="sl">Voice of the team</div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="showQ('mkt-r',this,'mkt-tabs')">Watch areas</button>
+    <button class="tab" onclick="showQ('mkt-g',this,'mkt-tabs')">Positive</button>
+  </div>
+  <div id="mkt-r" class="qp active mkt-tabs"><div class="g2">
+    <div>
+      <div class="qc r"><div class="qt">"The rollout of strategic projects this year was disorganized — everyone rushed into execution before the strategic goals were fully defined, leading to a lot of wasted effort."</div><div class="qs">Score 8 · NAMLAM · 1–4 years</div></div>
+      <div class="qc r"><div class="qt">"Cross-functional alignment — though we have made some improvements, we are sometimes still siloed with competing priorities."</div><div class="qs">Score 9 · NAMLAM · 1–4 years</div></div>
+    </div>
+    <div>
+      <div class="qc r"><div class="qt">"I'd love to see more visibility into the work in other departments, and for others to see the work we do."</div><div class="qs">Score 7 · APAC · 5+ years</div></div>
+      <div class="qc r"><div class="qt">"Having a clear career path and recognition process would have the biggest impact on my experience."</div><div class="qs">Score 8 · NAMLAM · 1–4 years</div></div>
+    </div>
+  </div></div>
+  <div id="mkt-g" class="qp mkt-tabs"><div class="g2">
+    <div>
+      <div class="qc g"><div class="qt">"Clear leadership. True opportunities to make real impact. Strong ownership of initiatives. The consistent focus on growth, strong feedback loops, and team collaboration."</div><div class="qs">Score 10 · NAMLAM · 1–4 years</div></div>
+      <div class="qc g"><div class="qt">"Continue to be profitable. Brian lays out clear plans for the company to stay afloat over the next few years. That kind of clarity and alignment is fantastic."</div><div class="qs">Score 9 · APAC · 5+ years</div></div>
+    </div>
+    <div>
+      <div class="qc g"><div class="qt">"The AI adoption has been truly a company effort where everyone chips in to support each other's development."</div><div class="qs">Score 9 · NAMLAM · 1–4 years</div></div>
+    </div>
+  </div></div>
+  <div class="insight" style="background:#F2EEF8;border-color:#B8A8D8;">
+    <div style="font-size:13px;font-weight:500;color:#3C2C7A;margin-bottom:4px;">Marketing — data summary</div>
+    <div style="font-size:13px;color:#3C2C7A;line-height:1.6;">eNPS: 60. Respondents: 10 (small sample — directional only). Avg score: 8.80. Promoters: 6 (60%). Passives: 4 (40%). Detractors: 0. Lowest drivers: team connection (4.00) and decision context (4.00). Top improvement priorities: career growth and leadership &amp; communication tied at 30% each — leadership &amp; communication is double the company-wide rate of 14%. Region: 40% NAMLAM, 30% APAC, 10% EMEA.</div>
+  </div>
+  <div class="footer">Marketing · eNPS 1H 2026 · For leaders reference</div>
+</div>
+
+<!-- ============ HISTORICAL ============ -->
+<div id="view-history" class="view">
+  <div class="sh">
+    <div>
+      <div class="sh-title">Past eNPS results</div>
+      <div class="sh-sub">Oct 2020 – Apr 2026 · 14 surveys · Respondents, team size &amp; response rate included</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="badge b-bl">13 surveys</span>
+      <span class="badge" style="background:rgba(160,113,79,.15);color:#A0714F;border:0.5px solid rgba(167,139,250,.3);">1H 2026: 58</span>
+    </div>
+  </div>
+
+  <div class="sl">Score over time — hover any point for details</div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div style="position:relative;width:100%;height:300px;">
+      <canvas id="historyChart" role="img" aria-label="Line chart showing all 14 eNPS scores from Oct 2020 to Apr 2026 with data labels.">Historical eNPS data across 14 surveys.</canvas>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;padding-top:12px;border-top:0.5px solid #D9C9B8;">
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#9B7E5E;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(59,109,17,.35);display:inline-block;"></span>75–80 · Peak range</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#9B7E5E;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(29,127,96,.35);display:inline-block;"></span>60–74</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#9B7E5E;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(186,117,23,.35);display:inline-block;"></span>50–59</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#9B7E5E;"><span style="width:10px;height:10px;border-radius:2px;background:rgba(163,45,45,.35);display:inline-block;"></span>below 50</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:#7C5635;margin-left:auto;"><span style="width:10px;height:10px;border-radius:50%;background:#7C5635;display:inline-block;"></span>Current survey (Apr 2026)</span>
+    </div>
+  </div>
+
+  <div class="sl">Survey-by-survey breakdown</div>
+  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead>
+        <tr style="border-bottom:0.5px solid #D9C9B8;">
+          <th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">#</th>
+          <th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">Period</th>
+          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">Respondents</th>
+          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">Team size</th>
+          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">Response rate</th>
+          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">vs. Previous</th>
+          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">eNPS</th>
+        </tr>
+      </thead>
+      <tbody id="history-rows"></tbody>
+    </table>
+  </div>
+
+  <div class="sl">Notable movements</div>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem;">
+
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem 1.25rem;display:flex;gap:1.25rem;align-items:flex-start;">
+      <div style="flex-shrink:0;text-align:center;min-width:56px;">
+        <div style="font-size:28px;font-weight:500;color:#2D6A1F;line-height:1;">80</div>
+        <div style="font-size:10px;color:#B89B7A;margin-top:3px;">all-time high</div>
+      </div>
+      <div style="border-left:0.5px solid #D9C9B8;padding-left:1.25rem;">
+        <div style="font-size:13px;font-weight:500;color:#3D2B1A;margin-bottom:4px;">Jul 2022 — peak score</div>
+        <div style="font-size:12px;color:#8B6E52;line-height:1.6;">Three consecutive gains from Jan–Jul 2022 brought the score to its highest point. Promoters were at their peak and participation was strong.</div>
+      </div>
+    </div>
+
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem 1.25rem;display:flex;gap:1.25rem;align-items:flex-start;">
+      <div style="flex-shrink:0;text-align:center;min-width:56px;">
+        <div style="font-size:28px;font-weight:500;color:#C0392B;line-height:1;">−24%</div>
+        <div style="font-size:10px;color:#B89B7A;margin-top:3px;">biggest drop</div>
+      </div>
+      <div style="border-left:0.5px solid #D9C9B8;padding-left:1.25rem;">
+        <div style="font-size:13px;font-weight:500;color:#3D2B1A;margin-bottom:4px;">May 2025 — 66.10 → 50.00</div>
+        <div style="font-size:12px;color:#8B6E52;line-height:1.6;">Detractors rose to 8.7%, passives to 32.3%, promoters fell to 59.1%. Top themes cited: salary reviews, medical care gaps, team engagement. Participation held at 90% (127/141).</div>
+      </div>
+    </div>
+
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem 1.25rem;display:flex;gap:1.25rem;align-items:flex-start;">
+      <div style="flex-shrink:0;text-align:center;min-width:56px;">
+        <div style="font-size:28px;font-weight:500;color:#7C5635;line-height:1;">+8</div>
+        <div style="font-size:10px;color:#B89B7A;margin-top:3px;">pts recovery</div>
+      </div>
+      <div style="border-left:0.5px solid #D9C9B8;padding-left:1.25rem;">
+        <div style="font-size:13px;font-weight:500;color:#3D2B1A;margin-bottom:4px;">1H 2026 vs. 1H 2025 — 50 → 58</div>
+        <div style="font-size:12px;color:#8B6E52;line-height:1.6;">Detractors dropped from 8.7% to 2%. Promoters held at ~60%. Participation: 87% (125/135). Compensation transparency, career paths, and in-person connection remain recurring themes across both surveys.</div>
+      </div>
+    </div>
+
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem 1.25rem;display:flex;gap:1.25rem;align-items:flex-start;">
+      <div style="flex-shrink:0;text-align:center;min-width:56px;">
+        <div style="font-size:28px;font-weight:500;color:#8B5E00;line-height:1;">≈66</div>
+        <div style="font-size:10px;color:#B89B7A;margin-top:3px;">flat 2024</div>
+      </div>
+      <div style="border-left:0.5px solid #D9C9B8;padding-left:1.25rem;">
+        <div style="font-size:13px;font-weight:500;color:#3D2B1A;margin-bottom:4px;">2024 plateau — 66.20 → 66.10</div>
+        <div style="font-size:12px;color:#8B6E52;line-height:1.6;">Score stayed flat across 1H and 2H 2024 while participation fell 13 pts (88% → 79%). Dept scores: Ops 94.4, Revenue 66.7, PE 57.1. Key concerns: comms &amp; transparency, career development, missed salary increments.</div>
+      </div>
+    </div>
+
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem 1.25rem;display:flex;gap:1.25rem;align-items:flex-start;">
+      <div style="flex-shrink:0;text-align:center;min-width:56px;">
+        <div style="font-size:28px;font-weight:500;color:#A0714F;line-height:1;">3 yrs</div>
+        <div style="font-size:10px;color:#B89B7A;margin-top:3px;">same themes</div>
+      </div>
+      <div style="border-left:0.5px solid #D9C9B8;padding-left:1.25rem;">
+        <div style="font-size:13px;font-weight:500;color:#3D2B1A;margin-bottom:4px;">Recurring themes — 2024 to 2026</div>
+        <div style="font-size:12px;color:#8B6E52;line-height:1.6;">Compensation transparency and career growth have appeared in every survey from 1H 2024 through 1H 2026. Team connection and in-person meetups are consistent asks. Strengths unchanged: remote flexibility, supportive culture, leadership accessibility.</div>
+      </div>
+    </div>
+
+    <div style="background:#FFFCF8;border:0.5px solid #D9C9B8;border-radius:8px;padding:1rem 1.25rem;display:flex;gap:1.25rem;align-items:flex-start;">
+      <div style="flex-shrink:0;text-align:center;min-width:56px;">
+        <div style="font-size:28px;font-weight:500;color:#A05C00;line-height:1;">↓</div>
+        <div style="font-size:10px;color:#B89B7A;margin-top:3px;">dept shifts</div>
+      </div>
+      <div style="border-left:0.5px solid #D9C9B8;padding-left:1.25rem;">
+        <div style="font-size:13px;font-weight:500;color:#3D2B1A;margin-bottom:4px;">Department score shifts — 2H 2024 → 1H 2026</div>
+        <div style="font-size:12px;color:#8B6E52;line-height:1.6;">
+          <span style="display:inline-flex;align-items:center;gap:5px;margin-right:12px;"><span style="color:#3B82F6;font-weight:500;">PE</span> 57.1 → 66 <span style="background:rgba(59,109,17,.2);color:#2D6A1F;font-size:10px;padding:1px 5px;border-radius:3px;">+8.9</span></span>
+          <span style="display:inline-flex;align-items:center;gap:5px;margin-right:12px;"><span style="color:#1D9E75;font-weight:500;">Ops</span> 94.4 → 62 <span style="background:rgba(162,45,45,.2);color:#C0392B;font-size:10px;padding:1px 5px;border-radius:3px;">−32.4</span></span>
+          <span style="display:inline-flex;align-items:center;gap:5px;"><span style="color:#A05C00;font-weight:500;">Revenue</span> 66.7 → 45 <span style="background:rgba(162,45,45,.2);color:#C0392B;font-size:10px;padding:1px 5px;border-radius:3px;">−21.7</span></span>
+          <div style="margin-top:6px;">Marketing was not a separate department in the 2H 2024 report. Operations still holds zero detractors despite the point drop.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer" style="color:#B89B7A;">Time Doctor · eNPS historical record · Oct 2020 – 1H 2026 · For leaders reference</div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+function showView(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function showQ(id, btn, group) {
+  document.querySelectorAll('.' + group).forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => {
+    if(t.getAttribute('onclick') && t.getAttribute('onclick').includes(group)) t.classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// CHARTS
+new Chart(document.getElementById('oc'), {
+  type:'bar', data:{labels:['6','7','8','9','10'],datasets:[{data:[3,16,31,30,45],backgroundColor:['#A32D2D','#BA7517','#3B82F6','#3B82F6','#3B6D11'],borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#9B7E5E',font:{size:11}}},y:{display:false,beginAtZero:true}}}
+});
+
+new Chart(document.getElementById('dc'), {
+  type:'bar', data:{labels:['Product Engineering','Operations','Marketing','Revenue'],datasets:[{data:[66,62,60,45],backgroundColor:['#3B82F6','#1D9E75','#7F77DD','#F5A623'],borderRadius:5,barThickness:22}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{min:0,max:80,grid:{color:'rgba(0,0,0,0.06)'},ticks:{color:'#9B7E5E',font:{size:11}}},y:{grid:{display:false},ticks:{color:'#8B6E52',font:{size:12}}}}}
+});
+
+// DRIVER RENDERER
+function renderDrivers(containerId, scores, color) {
+  const labels = ['Compensation','Role clarity','Manager support','Leadership trust','Decision context','Workload sustainability','Team connection'];
+  const avg = [3.66,4.43,4.60,4.35,4.23,4.19,4.31];
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = '';
+  labels.forEach((label, i) => {
+    const score = scores[i];
+    const pct = (score / 5 * 100).toFixed(1);
+    const avgPct = (avg[i] / 5 * 100).toFixed(1);
+    const diff = score - avg[i];
+    const diffStr = (diff >= 0 ? '+' : '') + diff.toFixed(2);
+    const dc = diff >= 0 ? '#7DC654' : '#F87171';
+    const db = diff >= 0 ? 'rgba(59,109,17,.15)' : 'rgba(162,45,45,.15)';
+    const barC = score >= 4.3 ? '#3B6D11' : score >= 3.8 ? color : '#A32D2D';
+    el.innerHTML += `<div class="dr">
+      <span class="dl">${label}</span>
+      <div class="dt">
+        <div class="df" style="width:${pct}%;background:${barC};"></div>
+        <div style="position:absolute;top:-4px;left:${avgPct}%;width:2px;height:15px;background:#B89B7A;border-radius:1px;"></div>
+      </div>
+      <span class="ds" style="color:${barC};">${score.toFixed(2)}</span>
+      <span style="font-size:11px;font-weight:500;color:${dc};background:${db};padding:1px 5px;border-radius:4px;width:40px;text-align:center;flex-shrink:0;">${diffStr}</span>
+    </div>`;
+  });
+}
+
+// Overall drivers
+const ov = document.getElementById('ov-drivers');
+const ovDrivers = [
+  {l:'Compensation', v:3.66},{l:'Role clarity', v:4.43},{l:'Manager support', v:4.60},
+  {l:'Leadership trust', v:4.35},{l:'Decision context', v:4.23},{l:'Workload sustainability', v:4.19},{l:'Team connection', v:4.31}
+];
+ovDrivers.forEach(d => {
+  const pct = (d.v / 5 * 100).toFixed(1);
+  const c = d.v >= 4.3 ? '#3B6D11' : d.v >= 3.8 ? '#60A5FA' : '#A32D2D';
+  ov.innerHTML += `<div class="dr"><span class="dl">${d.l}</span><div class="dt"><div class="df" style="width:${pct}%;background:${c};"></div></div><span class="ds" style="color:${c};">${d.v.toFixed(2)}</span></div>`;
+});
+
+renderDrivers('pe-dv',  [3.90,4.56,4.80,4.46,4.38,4.34,4.38], '#3B82F6');
+renderDrivers('ops-dv', [3.35,4.54,4.54,4.54,4.46,4.31,4.54], '#1D9E75');
+renderDrivers('rev-dv', [3.82,4.32,4.27,4.00,3.82,3.86,4.09], '#F5A623');
+renderDrivers('mkt-dv', [3.40,4.20,4.70,4.20,4.00,4.10,4.00], '#7F77DD');
+
+// HISTORICAL DATA
+const histData = [
+  {order:1,  period:'Oct 2020',  respondents:72,  people:115, rate:'63%', change: null,     score: 48.00},
+  {order:2,  period:'Apr 2021',  respondents:86,  people:123, rate:'70%', change: -8.33,    score: 44.00},
+  {order:3,  period:'Jul 2021',  respondents:79,  people:129, rate:'61%', change: +29.55,   score: 57.00},
+  {order:4,  period:'Oct 2021',  respondents:79,  people:131, rate:'60%', change: -8.77,    score: 52.00},
+  {order:5,  period:'Jan 2022',  respondents:74,  people:130, rate:'57%', change: +17.31,   score: 61.00},
+  {order:6,  period:'Apr 2022',  respondents:52,  people:125, rate:'42%', change: +22.95,   score: 75.00},
+  {order:7,  period:'Jul 2022',  respondents:63,  people:135, rate:'47%', change: +6.67,    score: 80.00},
+  {order:8,  period:'Nov 2022',  respondents:104, people:139, rate:'75%', change: -12.50,   score: 70.00},
+  {order:9,  period:'Apr 2023',  respondents:126, people:155, rate:'81%', change: +13.43,   score: 79.40},
+  {order:10, period:'Nov 2023',  respondents:130, people:150, rate:'87%', change: -17.72,   score: 65.40},
+  {order:11, period:'Feb 2024',  respondents:130, people:147, rate:'88%', change: +1.22,    score: 66.20},
+  {order:12, period:'Aug 2024',  respondents:112, people:141, rate:'79%', change: -0.15,    score: 66.10},
+  {order:13, period:'Jul 2025',  respondents:127, people:141, rate:'90%', change: -24.36,   score: 50.00},
+  {order:14, period:'Apr 2026',  respondents:116, people:134, rate:'87%', change: +16.00,   score: 58.00, current: true},
+];
+
+function scoreColor(s) {
+  if (s >= 75) return '#3B6D11';
+  if (s >= 60) return '#1D7F60';
+  if (s >= 50) return '#BA7517';
+  return '#A32D2D';
+}
+function scoreBg(s) {
+  if (s >= 75) return 'rgba(59,109,17,.25)';
+  if (s >= 60) return 'rgba(29,127,96,.2)';
+  if (s >= 50) return 'rgba(186,117,23,.2)';
+  return 'rgba(163,45,45,.25)';
+}
+
+// History line chart
+// Build table rows
+const tbody = document.getElementById('history-rows');
+if (tbody) {
+  histData.forEach(r => {
+    const isCurrentRow = r.current ? 'background:#F5EEE6;' : '';
+    const currentBadge = r.current ? '<span style="font-size:10px;font-weight:500;padding:1px 6px;border-radius:4px;background:rgba(96,165,250,.15);color:#7C5635;margin-left:6px;">current</span>' : '';
+    const changeHtml = r.change === null
+      ? '<span style="color:#B89B7A;">—</span>'
+      : `<span style="font-size:12px;font-weight:500;color:${r.change >= 0 ? '#7DC654' : '#F87171'};">${r.change >= 0 ? '+' : ''}${r.change.toFixed(2)}%</span>`;
+    const sc = scoreColor(r.score);
+    const sb = scoreBg(r.score);
+    // Response rate color
+    const rateNum = parseInt(r.rate);
+    const rateColor = rateNum >= 80 ? '#7DC654' : rateNum >= 60 ? '#FCD34D' : '#F87171';
+    tbody.innerHTML += `<tr style="border-bottom:0.5px solid #D9C9B8;${isCurrentRow}">
+      <td style="padding:9px 10px;color:#B89B7A;font-size:11px;">${r.order}</td>
+      <td style="padding:9px 10px;color:#3D2B1A;font-weight:${r.current?'500':'400'};">${r.period}${currentBadge}</td>
+      <td style="padding:9px 10px;text-align:right;color:#8B6E52;">${r.respondents}</td>
+      <td style="padding:9px 10px;text-align:right;color:#9B7E5E;">${r.people}</td>
+      <td style="padding:9px 10px;text-align:right;font-weight:500;color:${rateColor};">${r.rate}</td>
+      <td style="padding:9px 10px;text-align:right;">${changeHtml}</td>
+      <td style="padding:9px 10px;text-align:right;">
+        <span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:6px;background:${sb};color:${sc};">${r.score.toFixed(2)}</span>
+      </td>
+    </tr>`;
+  });
+}
+
+// History line chart — only render when view becomes active
+let histChartRendered = false;
+const origShowView = showView;
+window.showView = function(id, btn) {
+  origShowView(id, btn);
+  if (id === 'history' && !histChartRendered) {
+    histChartRendered = true;
+    const labels = histData.map(r => r.period);
+    const scores = histData.map(r => r.score);
+    const pointColors = scores.map((s, i) => histData[i].current ? '#7C5635' : scoreColor(s));
+    const pointRadii = scores.map((s, i) => histData[i].current ? 8 : 5);
+
+    // Register datalabels plugin inline
+    Chart.register({
+      id: 'customLabels',
+      afterDatasetsDraw(chart) {
+        const ctx = chart.ctx;
+        chart.data.datasets.forEach((dataset, i) => {
+          const meta = chart.getDatasetMeta(i);
+          meta.data.forEach((point, idx) => {
+            const score = dataset.data[idx];
+            const isCurrent = histData[idx].current;
+            ctx.save();
+            ctx.font = `${isCurrent ? '600' : '500'} 10px -apple-system, sans-serif`;
+            ctx.fillStyle = isCurrent ? '#7C5635' : pointColors[idx];
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(score % 1 === 0 ? score : score.toFixed(1), point.x, point.y - 8);
+            ctx.restore();
+          });
+        });
+      }
+    });
+
+    new Chart(document.getElementById('historyChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data: scores,
+          borderColor: '#A0714F',
+          borderWidth: 2,
+          backgroundColor: 'rgba(160,113,79,.06)',
+          fill: true,
+          tension: 0.3,
+          pointBackgroundColor: pointColors,
+          pointBorderColor: pointColors,
+          pointRadius: pointRadii,
+          pointHoverRadius: 9,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const r = histData[ctx.dataIndex];
+                const chg = r.change !== null ? ` · ${r.change >= 0 ? '+' : ''}${r.change}% vs prev` : '';
+                return ` eNPS: ${ctx.raw}${chg} · ${r.respondents}/${r.people} (${r.rate})`;
+              },
+              title: ctx => ctx[0].label,
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(61,43,26,0.08)' },
+            ticks: { color: '#9B7E5E', font: { size: 10 }, maxRotation: 45 }
+          },
+          y: {
+            min: 30, max: 95,
+            grid: { color: 'rgba(61,43,26,0.08)' },
+            ticks: { color: '#9B7E5E', font: { size: 11 } }
+          }
+        },
+        layout: { padding: { top: 20 } }
+      }
+    });
+  }
+};
+</script>
+</body>
+</html>
