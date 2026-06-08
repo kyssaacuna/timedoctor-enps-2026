@@ -732,22 +732,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
   </div>
 
-  <div class="sl">Survey-by-survey breakdown</div>
-  <div class="card" style="margin-bottom:1.5rem;overflow-x:auto;">
-    <table style="width:100%;border-collapse:collapse;font-size:12px;">
-      <thead>
-        <tr style="border-bottom:0.5px solid #D9C9B8;">
-          <th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">#</th>
-          <th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">Period</th>
-          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">Respondents</th>
-          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">Team size</th>
-          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">Response rate</th>
-          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">vs. Previous</th>
-          <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:500;color:#B89B7A;letter-spacing:.05em;text-transform:uppercase;">eNPS</th>
-        </tr>
-      </thead>
-      <tbody id="history-rows"></tbody>
-    </table>
+  <div class="sl">Participation rate over time</div>
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div style="font-size:13px;color:#8B6E52;margin-bottom:12px;">Hover any bar to see the exact respondent count and team size for that survey.</div>
+    <div style="position:relative;width:100%;height:260px;">
+      <canvas id="participationChart" role="img" aria-label="Bar chart showing response rate across 14 surveys from Oct 2020 to Apr 2026.">Response rate across 14 surveys.</canvas>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:12px;padding-top:12px;border-top:0.5px solid #D9C9B8;">
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#8B6E52;"><span style="width:14px;height:10px;border-radius:3px;background:#A8C5A0;display:inline-block;"></span>80% and above</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#8B6E52;"><span style="width:14px;height:10px;border-radius:3px;background:#D4A96A;display:inline-block;"></span>60–79%</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#8B6E52;"><span style="width:14px;height:10px;border-radius:3px;background:#C87A7A;display:inline-block;"></span>Below 60%</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:#7C5635;margin-left:auto;"><span style="width:14px;height:10px;border-radius:3px;background:#7C5635;display:inline-block;"></span>Current survey (Apr 2026)</span>
+    </div>
   </div>
 
   <div class="sl">Notable movements</div>
@@ -935,35 +931,6 @@ function scoreBg(s) {
   return 'rgba(163,45,45,.25)';
 }
 
-// History line chart
-// Build table rows
-const tbody = document.getElementById('history-rows');
-if (tbody) {
-  histData.forEach(r => {
-    const isCurrentRow = r.current ? 'background:#F5EEE6;' : '';
-    const currentBadge = r.current ? '<span style="font-size:10px;font-weight:500;padding:1px 6px;border-radius:4px;background:rgba(96,165,250,.15);color:#7C5635;margin-left:6px;">current</span>' : '';
-    const changeHtml = r.change === null
-      ? '<span style="color:#B89B7A;">—</span>'
-      : `<span style="font-size:12px;font-weight:500;color:${r.change >= 0 ? '#7DC654' : '#F87171'};">${r.change >= 0 ? '+' : ''}${r.change.toFixed(2)}%</span>`;
-    const sc = scoreColor(r.score);
-    const sb = scoreBg(r.score);
-    // Response rate color
-    const rateNum = parseInt(r.rate);
-    const rateColor = rateNum >= 80 ? '#7DC654' : rateNum >= 60 ? '#FCD34D' : '#F87171';
-    tbody.innerHTML += `<tr style="border-bottom:0.5px solid #D9C9B8;${isCurrentRow}">
-      <td style="padding:9px 10px;color:#B89B7A;font-size:11px;">${r.order}</td>
-      <td style="padding:9px 10px;color:#3D2B1A;font-weight:${r.current?'500':'400'};">${r.period}${currentBadge}</td>
-      <td style="padding:9px 10px;text-align:right;color:#8B6E52;">${r.respondents}</td>
-      <td style="padding:9px 10px;text-align:right;color:#9B7E5E;">${r.people}</td>
-      <td style="padding:9px 10px;text-align:right;font-weight:500;color:${rateColor};">${r.rate}</td>
-      <td style="padding:9px 10px;text-align:right;">${changeHtml}</td>
-      <td style="padding:9px 10px;text-align:right;">
-        <span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:6px;background:${sb};color:${sc};">${r.score.toFixed(2)}</span>
-      </td>
-    </tr>`;
-  });
-}
-
 // History line chart — only render when view becomes active
 let histChartRendered = false;
 const origShowView = showView;
@@ -1045,6 +1012,56 @@ window.showView = function(id, btn) {
         layout: { padding: { top: 20 } }
       }
     });
+
+    // PARTICIPATION CHART — bars only
+    const rateNums = histData.map(r => parseInt(r.rate));
+    const barColors = histData.map(r => {
+      if (r.current) return '#7C5635';
+      const n = parseInt(r.rate);
+      return n >= 80 ? '#A8C5A0' : n >= 60 ? '#D4A96A' : '#C87A7A';
+    });
+    new Chart(document.getElementById('participationChart'), {
+      type: 'bar',
+      data: {
+        labels: histData.map(r => r.period),
+        datasets: [{
+          label: 'Response rate',
+          data: rateNums,
+          backgroundColor: barColors,
+          borderRadius: 5,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: ctx => ctx[0].label,
+              label: ctx => {
+                const r = histData[ctx.dataIndex];
+                return ` Response rate: ${r.rate}  (${r.respondents} of ${r.people})`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#9B7E5E', font: { size: 10 }, maxRotation: 45 }
+          },
+          y: {
+            min: 0, max: 110,
+            grid: { color: 'rgba(61,43,26,.06)' },
+            ticks: { color: '#9B7E5E', font: { size: 10 }, callback: v => v + '%' },
+            title: { display: true, text: 'Response rate %', color: '#B89B7A', font: { size: 10 } }
+          }
+        }
+      }
+    });
+
   }
 };
 </script>
